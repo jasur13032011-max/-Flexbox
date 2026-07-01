@@ -1,150 +1,143 @@
 # -Flexbox
-1. HTML Fayl (index.html)
-HTML
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To'liq Ekran Overlay</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+1. Global O'zgaruvchilar Fayli (_variables.scss)
+SCSS
+// ==========================================
+// 1. RANG O'ZGARUVCHILARI (Kamida 8 ta)
+// ==========================================
+$color-primary:       #3b82f6; // Asosiy ko'k rang
+$color-primary-hover: #1d4ed8; // Asosiy rang ustiga borgandagi holat
+$color-secondary:     #64748b; // Ikkinchi darajali kulrang
+$color-success:       #10b981; // Muvaffaqiyat (yashil)
+$color-danger:        #ef4444; // Xatolik/O'chirish (qizil)
+$color-bg-main:       #f8fafc; // Sahifaning asosiy foni
+$color-bg-card:       #ffffff; // Bloklar va kartalar foni
+$color-text-dark:     #0f172a; // To'q matnlar uchun
+$color-text-light:    #ffffff; // Yoritilgan matnlar uchun
+$color-border:        #e2e8f0; // Chegaralar uchun rang
 
-    <div class="sahifa-kontent">
-        <h1>Asosiy Sahifa</h1>
-        <p>Ushbu tugmani bossangiz, to'liq ekranli modal oyna ochiladi.</p>
-        <button id="ochish-btn" class="ochish-tugma">Overlayni Ochish</button>
-    </div>
+// ==========================================
+// 2. TIPOGRAFIYA O'ZGARUVCHILARI
+// ==========================================
+$font-size-sm:        0.875rem; // Kichik matnlar (14px)
+$font-size-md:        1rem;     // Oddiy matnlar (16px)
+$font-size-lg:        1.25rem;  // Katta matnlar (20px)
+$font-heading:        2rem;     // Sarlavhalar uchun (32px)
+$font-family-base:    'Inter', system-ui, sans-serif;
 
-    <div id="overlay" class="overlay">
-        <button id="yopish-btn" class="yopish-tugma">&times;</button>
+// ==========================================
+// 3. BO'SHLIQ SISTEMI (Spacing System)
+// ==========================================
+$space-xs:            0.25rem; // 4px
+$space-sm:            0.5rem;  // 8px
+$space-md:            1rem;    // 16px
+$space-lg:            1.5rem;  // 24px
+$space-xl:            2rem;    // 32px
+$space-2xl:           3rem;    // 48px
+
+// ==========================================
+// 4. BORDER-RADIUS VA BOX-SHADOW
+// ==========================================
+$radius-sm:           4px;
+$radius-md:           8px;
+$radius-lg:           12px;
+$radius-circle:       50%;
+
+$shadow-sm:           0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md:           0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg:           0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+2. Navigatsiya Komponenti Fayli (_nav.scss)
+SCSS
+// O'zgaruvchilarni ulash (Agar alohida faylda bo'lsa)
+@import 'variables';
+
+// ==========================================
+// 5. SCSS NESTING BILAN NAV KOMPONENTI
+// ==========================================
+.main-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    // O'zgaruvchilardan foydalanish
+    background-color: $color-bg-card;
+    padding: $space-md $space-lg;
+    border-bottom: 1px solid $color-border;
+    box-shadow: $shadow-sm;
+    font-family: $font-family-base;
+
+    .nav-logo {
+        font-size: $font-size-lg;
+        font-weight: 700;
+        color: $color-text-dark;
+        text-decoration: none;
         
-        <div class="modal-kontent">
-            <h2>Modal Oyna</h2>
-            <p>Bu <code>position: fixed</code> yordamida qilingan to'liq ekranli overlay. U sahifadagi barcha elementlarning ustida turadi.</p>
-        </div>
-    </div>
+        &:hover {
+            color: $color-primary;
+        }
+    }
 
-    <script src="script.js"></script>
-</body>
-</html>
-2. CSS Fayl (style.css)
-CSS
-/* Umumiy stillar */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: system-ui, -apple-system, sans-serif;
+    .nav-list {
+        display: flex;
+        gap: $space-md;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .nav-item {
+        // Element ichidagi elementlar (Nesting)
+        .nav-link {
+            display: inline-block;
+            font-size: $font-size-md;
+            color: $color-secondary;
+            text-decoration: none;
+            padding: $space-sm $space-md;
+            border-radius: $radius-sm;
+            transition: all 0.2s ease-in-out;
+
+            // Uchun :hover holati
+            &:hover {
+                color: $color-primary-hover;
+                background-color: lighten($color-primary, 35%); // SCSS o'rnatilgan funksiyasi
+            }
+
+            // Uchun .active holati (Joriy sahifa)
+            &.active {
+                color: $color-text-light;
+                background-color: $color-primary;
+                box-shadow: $shadow-md;
+                font-weight: 600;
+                
+                &:hover {
+                    background-color: $color-primary-hover;
+                }
+            }
+        }
+    }
 }
+3. Namuna HTML Tuzilishi (index.html)
+Ushbu SCSS kodlari brauzerda to'g'ri ko'rinishi uchun HTML quyidagi klaslar ierarxiyasida bo'lishi kerak:
 
-body {
-    background-color: #f1f5f9;
-    padding: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-.ochish-tugma {
-    padding: 12px 24px;
-    font-size: 16px;
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-/* --- TO'LIQ EKRAN OVERLAY (`position: fixed`) --- */
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(15, 23, 42, 0.95); /* To'q shaffof fon */
+HTML
+<nav class="main-nav">
+    <a href="#" class="nav-logo">BrendLogo</a>
     
-    /* Boshqa barcha elementlardan ustun turishi uchun yuqori z-index */
-    z-index: 9999; 
-    
-    /* Ichidagi kontentni markazlash */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    /* Standart holatda yashirin bo'ladi */
-    display: none; 
-}
+    <ul class="nav-list">
+        <li class="nav-item">
+            <a href="#" class="nav-link active">Bosh sahifa</a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">Xizmatlar</a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">Loyihalar</a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">Aloqa</a>
+        </li>
+    </ul>
+</nav>
+Kodning afzalliklari va tahlili:
+Sizga moslashuvchanlik: Dizayn rangini o'zgartirish uchun faqat $color-primary o'zgartirilsa kifoya, .nav-link:hover va .nav-link.active avtomatik ravishda yangi rangga moslashadi.
 
-/* Overlay ochilganda JS orqali qo'shiladigan klass */
-.overlay.active {
-    display: flex;
-}
-
-/* --- MODAL ICHIDAGI KONTENT --- */
-.modal-kontent {
-    color: white;
-    text-align: center;
-    max-width: 500px;
-    padding: 20px;
-}
-
-.modal-kontent h2 {
-    font-size: 32px;
-    margin-bottom: 15px;
-}
-
-.modal-kontent p {
-    color: #cbd5e1;
-    font-size: 18px;
-    line-height: 1.6;
-}
-
-/* --- YOPISH (X) TUGMASI (`position: absolute`) --- */
-.yopish-tugma {
-    position: absolute;
-    top: 25px;
-    right: 35px;
-    
-    background: transparent;
-    border: none;
-    color: #94a3b8;
-    font-size: 45px;
-    line-height: 1;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.yopish-tugma:hover {
-    color: #ffffff;
-}
-3. JavaScript Fayl (script.js)
-JavaScript
-// Elementlarni tanlab olamiz
-const ochishBtn = document.getElementById('ochish-btn');
-const yopishBtn = document.getElementById('yopish-btn');
-const overlay = document.getElementById('overlay');
-
-// Overlayni ochish hodisasi
-ochishBtn.addEventListener('click', () => {
-    overlay.classList.add('active');
-    // Sahifa orqasidagi scrollni to'xtatib turish (ixtiyoriy)
-    document.body.style.overflow = 'hidden'; 
-});
-
-// Overlayni yopish hodisasi
-yopishBtn.addEventListener('click', () => {
-    overlay.classList.remove('active');
-    // Scrollni qayta tiklash
-    document.body.style.overflow = 'auto'; 
-});
-Qo'llanilgan texnikalar tahlili:
-position: fixed (Overlay): Oynani brauzer oynasiga (viewport) nisbatan qotiradi. Sahifa pastga varaqlansa ham (scroll), overlay to'liq ekranni qoplab turaveradi.
-
-z-index: 9999: Yangi yuqori darajali stek kontekstini yaratib, ushbu modal oynani saytdagi boshqa har qanday element (rasmlar, menyular, matnlar) ustiga chiqishini kafolatlaydi.
-
-position: absolute (Yopish tugmasi): × tugmasini faqat o'zining ota-onasi bo'lgan .overlay konteyneriga nisbatan joylashtiradi.
+Toza Nesting: .nav-link ichida yozilgan &:hover brauzerda .main-nav .nav-item .nav-link:hover ko'rinishida CSS ga kompilyatsiya bo'ladi,
