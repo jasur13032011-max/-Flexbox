@@ -2,30 +2,28 @@
 1. HTML Fayl (index.html)
 HTML
 <!DOCTYPE html>
-<html lang="uz" data-theme="light">
+<html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tema Almashinuvi</title>
+    <title>To'liq Ekran Overlay</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="konteyner">
-        <header class="header">
-            <h1 class="sarlavha">Tema Almashish Tizimi</h1>
-            <button id="tema-toggle" class="tugma">Rejimni o'zgartirish</button>
-        </header>
+    <div class="sahifa-kontent">
+        <h1>Asosiy Sahifa</h1>
+        <p>Ushbu tugmani bossangiz, to'liq ekranli modal oyna ochiladi.</p>
+        <button id="ochish-btn" class="ochish-tugma">Overlayni Ochish</button>
+    </div>
 
-        <main class="kontent">
-            <div class="karta">
-                <h2 class="karta-sarlavha">CSS O'zgaruvchilari</h2>
-                <p class="matn">
-                    Ushbu sahifada birorta ham rang to'g'ridan-to'g'ri yozilmagan. 
-                    Barcha ranglar va o'lchamlar <code>:root</code> ichidagi o'zgaruvchilardan olinadi.
-                </p>
-            </div>
-        </main>
+    <div id="overlay" class="overlay">
+        <button id="yopish-btn" class="yopish-tugma">&times;</button>
+        
+        <div class="modal-kontent">
+            <h2>Modal Oyna</h2>
+            <p>Bu <code>position: fixed</code> yordamida qilingan to'liq ekranli overlay. U sahifadagi barcha elementlarning ustida turadi.</p>
+        </div>
     </div>
 
     <script src="script.js"></script>
@@ -33,129 +31,120 @@ HTML
 </html>
 2. CSS Fayl (style.css)
 CSS
-/* --- CSS O'ZGARUVCHILARI (:root) --- */
-:root {
-    /* O'lchamlar (Padding, Margin, Radius) */
-    --padding-asosiy: 20px;
-    --padding-karta: 25px;
-    --radius-burchak: 12px;
-    --shrift-katta: clamp(1.8rem, 3vw, 2.5rem);
-    --shrift-normal: 1rem;
-    --shrift-orta: 1.4rem;
-
-    /* Standart yorug' (light) tema ranglari */
-    --rang-fon: #f8fafc;
-    --rang-blok: #ffffff;
-    --rang-matn-asosiy: #0f172a;
-    --rang-matn-tizimli: #475569;
-    --rang-asosiy: #3b82f6;
-    --rang-asosiy-hover: #1d4ed8;
-    --rang-tugma-matn: #ffffff;
-    --rang-soya: rgba(0, 0, 0, 0.05);
-}
-
-/* --- QORONG'U (DARK) TEMA RANGLARI --- */
-[data-theme="dark"] {
-    --rang-fon: #0f172a;
-    --rang-blok: #1e293b;
-    --rang-matn-asosiy: #f8fafc;
-    --rang-matn-tizimli: #94a3b8;
-    --rang-asosiy: #38bdf8;
-    --rang-asosiy-hover: #7dd3fc;
-    --rang-tugma-matn: #0f172a;
-    --rang-soya: rgba(0, 0, 0, 0.3);
-}
-
-/* --- SAHIFA STILLARI (Faqat o'zgaruvchilar bilan) --- */
+/* Umumiy stillar */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: system-ui, -apple-system, sans-serif;
-    /* Tema almashganda ranglar silliq o'zgarishi uchun transition */
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 body {
-    background-color: var(--rang-fon);
-    color: var(--rang-matn-asosiy);
-    padding: var(--padding-asosiy);
-}
-
-.konteyner {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.header {
+    background-color: #f1f5f9;
+    padding: 40px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    margin-bottom: var(--padding-asosiy);
-    padding: var(--padding-asosiy) 0;
+    min-height: 100vh;
 }
 
-.sarlavha {
-    font-size: var(--shrift-katta);
-}
-
-/* Tugma stili */
-.tugma {
-    background-color: var(--rang-asosiy);
-    color: var(--rang-tugma-matn);
-    padding: 10px 20px;
+.ochish-tugma {
+    padding: 12px 24px;
+    font-size: 16px;
+    background-color: #3b82f6;
+    color: white;
     border: none;
-    border-radius: var(--radius-burchak);
-    font-weight: 600;
-    font-size: var(--shrift-normal);
+    border-radius: 6px;
     cursor: pointer;
+    font-weight: 600;
 }
 
-.tugma:hover {
-    background-color: var(--rang-asosiy-hover);
+/* --- TO'LIQ EKRAN OVERLAY (`position: fixed`) --- */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 23, 42, 0.95); /* To'q shaffof fon */
+    
+    /* Boshqa barcha elementlardan ustun turishi uchun yuqori z-index */
+    z-index: 9999; 
+    
+    /* Ichidagi kontentni markazlash */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Standart holatda yashirin bo'ladi */
+    display: none; 
 }
 
-/* Karta stili */
-.karta {
-    background-color: var(--rang-blok);
-    padding: var(--padding-karta);
-    border-radius: var(--radius-burchak);
-    box-shadow: 0 4px 6px -1px var(--rang-soya);
+/* Overlay ochilganda JS orqali qo'shiladigan klass */
+.overlay.active {
+    display: flex;
 }
 
-.karta-sarlavha {
-    font-size: var(--shrift-orta);
-    margin-bottom: 10px;
+/* --- MODAL ICHIDAGI KONTENT --- */
+.modal-kontent {
+    color: white;
+    text-align: center;
+    max-width: 500px;
+    padding: 20px;
 }
 
-.matn {
-    color: var(--rang-matn-tizimli);
-    font-size: var(--shrift-normal);
+.modal-kontent h2 {
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.modal-kontent p {
+    color: #cbd5e1;
+    font-size: 18px;
     line-height: 1.6;
+}
+
+/* --- YOPISH (X) TUGMASI (`position: absolute`) --- */
+.yopish-tugma {
+    position: absolute;
+    top: 25px;
+    right: 35px;
+    
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 45px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.yopish-tugma:hover {
+    color: #ffffff;
 }
 3. JavaScript Fayl (script.js)
 JavaScript
-// Tugmani tanlab olamiz
-const temaToggleBtn = document.getElementById('tema-toggle');
+// Elementlarni tanlab olamiz
+const ochishBtn = document.getElementById('ochish-btn');
+const yopishBtn = document.getElementById('yopish-btn');
+const overlay = document.getElementById('overlay');
 
-// HTML elementini tanlab olamiz (data-theme atributini o'zgartirish uchun)
-const htmlElement = document.documentElement;
-
-// Tugma bosilganda ishlaydigan funksiya
-temaToggleBtn.addEventListener('click', () => {
-    // Hozirgi temani tekshiramiz
-    const joriyTema = htmlElement.getAttribute('data-theme');
-    
-    // Agar light bo'lsa dark ga, aks holda light ga o'tkazamiz
-    if (joriyTema === 'light') {
-        htmlElement.setAttribute('data-theme', 'dark');
-    } else {
-        htmlElement.setAttribute('data-theme', 'light');
-    }
+// Overlayni ochish hodisasi
+ochishBtn.addEventListener('click', () => {
+    overlay.classList.add('active');
+    // Sahifa orqasidagi scrollni to'xtatib turish (ixtiyoriy)
+    document.body.style.overflow = 'hidden'; 
 });
-Bu tizimning ishlash mexanizmi:
-Hech qanday rang CSS ichida to'g'ridan-to'g'ri yozilmadi: Barcha rang beruvchi xossalar (masalan: background-color, color) var(--o'zgaruvchi-nom) ko'rinishida yozildi.
 
-Atribut orqali boshqarish: JavaScript tugma bosilganda HTML tegining data-theme atributini light yoki dark ga o'zgartiradi.
+// Overlayni yopish hodisasi
+yopishBtn.addEventListener('click', () => {
+    overlay.classList.remove('active');
+    // Scrollni qayta tiklash
+    document.body.style.overflow = 'auto'; 
+});
+Qo'llanilgan texnikalar tahlili:
+position: fixed (Overlay): Oynani brauzer oynasiga (viewport) nisbatan qotiradi. Sahifa pastga varaqlansa ham (scroll), overlay to'liq ekranni qoplab turaveradi.
 
-CSS-ning kuchi: [data-theme="dark"] selektori ishga tushganda, barcha o'zgaruvchilar yangi (qorong'u) rang qiymatlarini oladi va butun sahifa avtomatik ravishda yangi ranglarga moslashadi.
+z-index: 9999: Yangi yuqori darajali stek kontekstini yaratib, ushbu modal oynani saytdagi boshqa har qanday element (rasmlar, menyular, matnlar) ustiga chiqishini kafolatlaydi.
+
+position: absolute (Yopish tugmasi): × tugmasini faqat o'zining ota-onasi bo'lgan .overlay konteyneriga nisbatan joylashtiradi.
