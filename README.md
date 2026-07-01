@@ -1,164 +1,129 @@
 # -Flexbox
-1. Mixinlar Fayli (_mixins.scss)
+1. Placeholderlar va Komponentlar Fayli (_components.scss)
 SCSS
 // ==========================================
-// 1. FLEX-CENTER MIXIN
+// 1 & 2. PLACEHOLDERLAR (Sass % Placeholders)
 // ==========================================
-// Standart holatda elementlarni to'liq markazlaydi ($justify va $align o'zgartirilishi ham mumkin)
-@mixin flex-center($justify: center, $align: center) {
-    display: flex;
-    justify-content: $justify;
-    align-items: $align;
-}
+// %-placeholderlar CSS faylga to'g'ridan-to'g'ri kompilyatsiya bo'lmaydi.
+// Ular faqat boshqa klasslar ichida @extend qilingandagina kodni birlashtiradi.
 
-// ==========================================
-// 2. RESPOND-TO MIXIN (Media Queries)
-// ==========================================
-// Breakpoint qiymatlarini o'zgaruvchida saqlaymiz
-$breakpoints: (
-    'sm': 576px,
-    'md': 768px,
-    'lg': 992px,
-    'xl': 1200px
-);
-
-@mixin respond-to($breakpoint) {
-    // Berilgan breakpoint xaritada borligini tekshiramiz
-    @if map-has-key($breakpoints, $breakpoint) {
-        $value: map-get($breakpoints, $breakpoint);
-        
-        @media (max-width: $value) {
-            @content;
-        }
-    } @else {
-        @warn "Kechirasiz, bunday breakpoint topilmadi: #{$breakpoint}.";
-    }
-}
-
-// ==========================================
-// 3. BUTTON-VARIANT MIXIN
-// ==========================================
-// Ranglarni qabul qilib, tugma va uning :hover holatini avtomatlashtiradi
-@mixin button-variant($bg, $color) {
-    background-color: $bg;
-    color: $color;
-    border: 1px solid transparent;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-
-    &:hover {
-        // Rangni avtomatik 10% to'q qilib beradi
-        background-color: darken($bg, 10%);
-    }
-
-    &:active {
-        transform: scale(0.98);
-    }
-}
-
-// ==========================================
-// 4. TRUNCATE MIXIN (Matnni qisqartirish)
-// ==========================================
-// Berilgan qatorlar sonidan oshganda matn oxiriga uchta nuqta (...) qo'yadi
-@mixin truncate($lines: 1) {
-    @if $lines == 1 {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    } @else {
-        display: -webkit-box;
-        -webkit-line-clamp: $lines;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-}
-2. Komponentlar Fayli (_components.scss)
-Yuqoridagi barcha mixinlarni haqiqiy hayotiy komponentlarda (Karta va Tugmalar) ishlatib ko'ramiz:
-
-SCSS
-@import 'mixins';
-
-// ==========================================
-// 5. MIXINLARNING KOMPONENTLARDA ISHLATILISHI
-// ==========================================
-
-// --- A) Tugmalar Komponenti (button-variant ishlatilishi) ---
-.btn {
-    padding: 10px 20px;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 6px;
-    cursor: pointer;
-
-    // Mixin yordamida har xil variantlarni yaratamiz
-    &--primary {
-        @include button-variant(#3b82f6, #ffffff);
-    }
-
-    &--success {
-        @include button-variant(#10b981, #ffffff);
-    }
-
-    &--danger {
-        @include button-variant(#ef4444, #ffffff);
-    }
-}
-
-// --- B) Profil Kartasi Komponenti (Barcha mixinlar jamlanmasi) ---
-.profile-card {
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 24px;
-    max-width: 350px;
+%base-card {
+    padding: 20px;
+    border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    border: 1px solid transparent;
+}
 
-    // 1. flex-center mixin: Avatar va ma'lumotlarni vertikal tekislaydi
-    &__header {
-        @include flex-center(flex-start, center);
-        gap: 16px;
-        margin-bottom: 16px;
+%flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+// ==========================================
+// 3. .ALERT KOMPONENTI (@extend bilan)
+// ==========================================
+.alert {
+    // Baza xususiyatlarini placeholderdan meros qilib olamiz
+    @extend %base-card;
+    margin-bottom: 15px;
+    font-weight: 500;
+
+    // Variantlar
+    &--success {
+        background-color: #d1fae5;
+        color: #065f46;
+        border-color: #a7f3d0;
     }
 
-    &__avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background-color: #cbd5e1;
-        // Ichidagi ikonkani markazlash uchun yana flex-center
-        @include flex-center(); 
+    &--warning {
+        background-color: #fef3c7;
+        color: #92400e;
+        border-color: #fde68a;
     }
 
-    // 4. truncate mixin: Karta sarlavhasi va matnlarini jilovlash
-    &__title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        margin-bottom: 4px;
-        @include truncate(1); // Ism juda uzun bo'lsa 1 qatorda kesiladi
-    }
-
-    &__bio {
-        font-size: 0.9rem;
-        color: #64748b;
-        line-height: 1.5;
-        margin-bottom: 20px;
-        @include truncate(3); // Bioografiya 3 qatordan oshsa ... bo'ladi
-    }
-
-    // 2. respond-to mixin: Kichik (Mobil) ekranda kartani moslashtirish
-    @include respond-to('md') {
-        max-width: 100%; // Mobil ekranda to'liq kenglikni oladi
-        padding: 16px;
-
-        &__header {
-            flex-direction: column; // Rasmni tepaga, matnni pastga tushiradi
-            text-align: center;
-            @include flex-center(center, center);
-        }
+    &--error {
+        background-color: #fee2e2;
+        color: #991b1b;
+        border-color: #fca5a5;
     }
 }
-Kodlar Tahlili:
-@include flex-center(): Kodni qayta yozishdan asraydi, display: flex, justify-content kabilarni bir qatorda hal qiladi.
 
-@include respond-to('md'): CSS ichida chalkash media-query yozishni yo'qotadi va komponentga tegishli responsiv kodni komponentning o'z ichida saqlashga yordam beradi.
+// ==========================================
+// 4. .BADGE KOMPONENTI (4 ta variant)
+// ==========================================
+.badge {
+    // Matnni o'rtalash uchun tayyor placeholderdan foydalanamiz
+    @extend %flex-center;
+    display: inline-flex; // Badge odatda inline-blok bo'ladi
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 9999px; // To'liq yumaloq shakl (pill)
+    text-transform: uppercase;
 
-@include truncate(3): CSS-ning eski va murakkab
+    // Variantlar
+    &--primary {
+        background-color: #3b82f6;
+        color: #ffffff;
+    }
+
+    &--secondary {
+        background-color: #64748b;
+        color: #ffffff;
+    }
+
+    &--info {
+        background-color: #06b6d4;
+        color: #ffffff;
+    }
+
+    &--dark {
+        background-color: #0f172a;
+        color: #ffffff;
+    }
+}
+
+// ==========================================
+// 5. @EXTEND VA MIXIN FARQI (IZOH)
+// ==========================================
+/*
+  ========================================================================
+  📌 @EXTEND va @MIXIN O'RTASIDAGI ASOSIY FARQLAR:
+  
+  1. Kodning kompilyatsiya bo'lishi (CSS shakli):
+     - @mixin: Uni chaqirgan har bir klass ichiga kodni NUSXALAB (copy-paste) joylashtiradi.
+       CSS hajmi kattalashishi mumkin, lekin selektorlar alohida qoladi.
+     - @extend: Bir xil kodni ishlatuvchi klasslarni CSS-da vergul bilan BIRLASHTIRADI.
+       Masalan, .alert--success, .alert--warning { padding: 20px; ... } shakliga keladi.
+       Bu CSS fayl hajmini sezilarli darajada kichraytiradi (DRY prinsipi).
+
+  2. Parametrlar (Argumentlar):
+     - @mixin: Dinamik parametrlar qabul qila oladi (masalan: @mixin tugma($rang) ).
+     - @extend / Placeholder: Hech qanday parametr qabul qilmaydi, faqat statik kodlarni
+       meros qilib beradi.
+
+  💡 Qachon qaysi biri ishlatiladi?
+     - Agar elementlaringiz mutqloq bir xil bazaviy stillarga ega bo'lsa (masalan, barcha alertlar),
+       @extend (%placeholder) ishlating.
+     - Agar stil o'lchamlari yoki ranglari vaziyatga qarab o'zgarishi kerak bo'lsa (dinamik bo'lsa),
+       @mixin ishlating.
+  ========================================================================
+*/
+2. Namunaviy HTML Tuzilishi (index.html)
+Ushbu komponentlarni brauzerda sinab ko'rish uchun quyidagi HTML klasslaridan foydalanishingiz mumkin:
+
+HTML
+<div class="container">
+    <div class="alert alert--success">Muvaffaqiyatli bajarildi!</div>
+    <div class="alert alert--warning">Diqqat! Tizimda yangilanish kutilmoqda.</div>
+    <div class="alert alert--error">Xatolik yuz berdi. Qayta urinib ko'ring.</div>
+
+    <br>
+
+    <span class="badge badge--primary">Yangi</span>
+    <span class="badge badge--secondary">Eski</span>
+    <span class="badge badge--info">Ma'lumot</span>
+    <span class="badge badge--dark">Yopiq</span>
+</div>
