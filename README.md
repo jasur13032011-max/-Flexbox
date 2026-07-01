@@ -1,4 +1,31 @@
 # -Flexbox
+1. display: flex — Включение Flexbox
+Добавление свойства display: flex к контейнерному элементу превращает всех его непосредственных дочерних элементов во flex-элементы.
+
+.container {
+  display: flex;
+  background-color: #f5f5f5;
+  padding: 16px;
+}
+2. flex-direction — Направление элементов
+row — слева направо (по умолчанию)
+row-reverse — справа налево
+column — сверху вниз
+column-reverse — снизу вверх
+3. justify-content — Выравнивание по главной оси
+flex-start — прижать к началу (по умолчанию)
+flex-end — прижать к концу
+center — по центру
+space-between — равные промежутки между элементами
+space-around — равные отступы вокруг каждого
+space-evenly — все промежутки одинаковые
+4. align-items — Выравнивание по поперечной оси
+stretch — растянуть на всю высоту (по умолчанию)
+flex-start — прижать к верху
+flex-end — прижать к низу
+center — по центру
+baseline — по базовой линии текста
+5. flex-wrap — Перенос на несколько строк
 .gallery {
   display: flex;
   flex-wrap: wrap;
@@ -53,4 +80,4 @@ flex-basis — начальный базовый размер
   border: none;
   border-radius: 6px;
   cursor: pointer;
-}
+877ujn
