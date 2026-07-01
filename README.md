@@ -1,129 +1,96 @@
 # -Flexbox
-1. Placeholderlar va Komponentlar Fayli (_components.scss)
+Quyida so'ralgan papkalar tuzilmasi va fayllarning bir-biri bilan qanday bog'lanishi to'liq ko'rsatilgan.
+
+1. Loyiha Tuzilmasi (Folder Structure)
+Loyiha papkalari va fayllari quyidagicha joylashishi kerak:
+
+Plaintext
+scss/
+│
+├── abstracts/
+│   ├── _variables.scss
+│   ├── _mixins.scss
+│   ├── _functions.scss
+│   └── _index.scss
+│
+├── base/
+│   └── _reset.scss
+│
+├── components/
+│   └── _buttons.scss
+│
+├── layouts/
+│   └── _navbar.scss
+│
+├── pages/
+│   └── _home.scss
+│
+└── main.scss
+2. Abstracts (Abstrakt) Fayllar
+abstracts/ papkasidagi fayllar brauzer uchun to'g'ridan-to'g'ri CSS kod ishlab chiqarmaydi, ular faqat boshqa fayllarda ishlatiladigan vositalardir.
+
+abstracts/_variables.scss
 SCSS
-// ==========================================
-// 1 & 2. PLACEHOLDERLAR (Sass % Placeholders)
-// ==========================================
-// %-placeholderlar CSS faylga to'g'ridan-to'g'ri kompilyatsiya bo'lmaydi.
-// Ular faqat boshqa klasslar ichida @extend qilingandagina kodni birlashtiradi.
-
-%base-card {
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    background-color: #ffffff;
-    border: 1px solid transparent;
-}
-
-%flex-center {
+$color-primary: #3b82f6;
+$color-secondary: #64748b;
+$space-md: 16px;
+abstracts/_mixins.scss
+SCSS
+@mixin flex-center {
     display: flex;
     justify-content: center;
     align-items: center;
 }
-
-// ==========================================
-// 3. .ALERT KOMPONENTI (@extend bilan)
-// ==========================================
-.alert {
-    // Baza xususiyatlarini placeholderdan meros qilib olamiz
-    @extend %base-card;
-    margin-bottom: 15px;
-    font-weight: 500;
-
-    // Variantlar
-    &--success {
-        background-color: #d1fae5;
-        color: #065f46;
-        border-color: #a7f3d0;
-    }
-
-    &--warning {
-        background-color: #fef3c7;
-        color: #92400e;
-        border-color: #fde68a;
-    }
-
-    &--error {
-        background-color: #fee2e2;
-        color: #991b1b;
-        border-color: #fca5a5;
-    }
+abstracts/_functions.scss
+SCSS
+// Pikselni REM ga o'giruvchi funksiya
+@function px-to-rem($px) {
+    @return ($px / 16) * 1rem;
 }
+3. @forward bilan abstracts/_index.scss yaratish
+abstracts/ ichidagi barcha vositalarni bitta joyga to'plab, tashqariga uzatish (forward qilish) uchun shu papka ichida _index.scss ochiladi. Bu tashqi fayllarga abstracts papkasini bitta yo'l bilan chaqirish imkonini beradi.
 
-// ==========================================
-// 4. .BADGE KOMPONENTI (4 ta variant)
-// ==========================================
-.badge {
-    // Matnni o'rtalash uchun tayyor placeholderdan foydalanamiz
-    @extend %flex-center;
-    display: inline-flex; // Badge odatda inline-blok bo'ladi
-    padding: 4px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    border-radius: 9999px; // To'liq yumaloq shakl (pill)
-    text-transform: uppercase;
+abstracts/_index.scss
+SCSS
+@forward 'variables';
+@forward 'mixins';
+@forward 'functions';
+4. Komponentlarda Namespace (Nomlar fazosi) ishlatish
+Endi components/_buttons.scss faylida abstracts ichidagi o'zgaruvchi va mixinlarni zamonaviy Namespace orqali chaqiramiz.
 
-    // Variantlar
-    &--primary {
-        background-color: #3b82f6;
-        color: #ffffff;
-    }
+components/_buttons.scss
+SCSS
+// abstracts papkasidagi _index.scss ni yuklaymiz. 
+// Avtomatik ravishda unga 'abstracts' nomi (namespace) beriladi.
+@use '../abstracts';
 
-    &--secondary {
-        background-color: #64748b;
-        color: #ffffff;
-    }
-
-    &--info {
-        background-color: #06b6d4;
-        color: #ffffff;
-    }
-
-    &--dark {
-        background-color: #0f172a;
-        color: #ffffff;
-    }
+.btn-primary {
+    // Namespace yordamida o'zgaruvchi va funksiyani ishlatish
+    background-color: abstracts.$color-primary;
+    padding: abstracts.$space-md;
+    font-size: abstracts.px-to-rem(18); 
+    
+    // Mixinni ishlatish
+    @include abstracts.flex-center;
 }
+5. main.scss da barcha fayllarni yig'ish
+main.scss — bu loyihaning markaziy fayli bo'lib, u barcha qismlarni @use orqali tartib bilan birlashtiradi va yakuniy bitta CSS fayliga kompilyatsiya qiladi.
 
-// ==========================================
-// 5. @EXTEND VA MIXIN FARQI (IZOH)
-// ==========================================
-/*
-  ========================================================================
-  📌 @EXTEND va @MIXIN O'RTASIDAGI ASOSIY FARQLAR:
-  
-  1. Kodning kompilyatsiya bo'lishi (CSS shakli):
-     - @mixin: Uni chaqirgan har bir klass ichiga kodni NUSXALAB (copy-paste) joylashtiradi.
-       CSS hajmi kattalashishi mumkin, lekin selektorlar alohida qoladi.
-     - @extend: Bir xil kodni ishlatuvchi klasslarni CSS-da vergul bilan BIRLASHTIRADI.
-       Masalan, .alert--success, .alert--warning { padding: 20px; ... } shakliga keladi.
-       Bu CSS fayl hajmini sezilarli darajada kichraytiradi (DRY prinsipi).
+main.scss
+SCSS
+// 1. Strukturasiz (Abstracts) vositalarni yuklash (ixtiyoriy, agar main.scss da ham kerak bo'lsa)
+@use 'abstracts';
 
-  2. Parametrlar (Argumentlar):
-     - @mixin: Dinamik parametrlar qabul qila oladi (masalan: @mixin tugma($rang) ).
-     - @extend / Placeholder: Hech qanday parametr qabul qilmaydi, faqat statik kodlarni
-       meros qilib beradi.
+// 2. Bazaviy stillar
+@use 'base/reset';
 
-  💡 Qachon qaysi biri ishlatiladi?
-     - Agar elementlaringiz mutqloq bir xil bazaviy stillarga ega bo'lsa (masalan, barcha alertlar),
-       @extend (%placeholder) ishlating.
-     - Agar stil o'lchamlari yoki ranglari vaziyatga qarab o'zgarishi kerak bo'lsa (dinamik bo'lsa),
-       @mixin ishlating.
-  ========================================================================
-*/
-2. Namunaviy HTML Tuzilishi (index.html)
-Ushbu komponentlarni brauzerda sinab ko'rish uchun quyidagi HTML klasslaridan foydalanishingiz mumkin:
+// 3. Maketlar (Layouts)
+@use 'layouts/navbar';
 
-HTML
-<div class="container">
-    <div class="alert alert--success">Muvaffaqiyatli bajarildi!</div>
-    <div class="alert alert--warning">Diqqat! Tizimda yangilanish kutilmoqda.</div>
-    <div class="alert alert--error">Xatolik yuz berdi. Qayta urinib ko'ring.</div>
+// 4. Komponentlar
+@use 'components/buttons';
 
-    <br>
-
-    <span class="badge badge--primary">Yangi</span>
-    <span class="badge badge--secondary">Eski</span>
-    <span class="badge badge--info">Ma'lumot</span>
-    <span class="badge badge--dark">Yopiq</span>
-</div>
+// 5. Sahifalar (Pages)
+@use 'pages/home';
+💡 Zamonaviy Sass qoidasi:
+Eski @import o'rniga @use va @forward ishlatishning asosiy sababi — global to'qnashuvlarning oldini olishdir. @use yordamida har bir fayl o'z o'zgaruvchilarini shaxsiy "g'aladonda" (Namespace) saqlaydi va kodlar bir-biriga aralashib ketmaydi.
