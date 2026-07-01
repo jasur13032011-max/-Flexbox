@@ -1,5 +1,5 @@
 # -Flexbox
-Mana Flexbox yordamida so'ralgan talablar asosida tayyorlangan kodlar to'plami. HTML va CSS alohida fayllarga ajratilgan.
+HTML va CSS kodlari alohida fayllarga ajratilgan.
 
 1. HTML Fayl (index.html)
 HTML
@@ -8,35 +8,45 @@ HTML
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flexbox Maket</title>
+    <title>CSS Grid Maket</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header class="navbar">
-        <div class="logo">MeningLogo</div>
-        <nav class="nav-menu">
-            <a href="#">Bosh sahifa</a>
-            <a href="#">Xizmatlar</a>
-            <a href="#">Biz haqimizda</a>
-            <a href="#">Aloqa</a>
-        </nav>
-    </header>
+    <div class="grid-container">
+        <header class="header">
+            <h1>Mening Veb-sahifam</h1>
+        </header>
 
-    <main class="card-container">
-        <div class="card">
-            <h3>Karta 1</h3>
-            <p>Bu birinchi karta uchun matn. Flexbox yordamida barcha kartalar teng kenglikda joylashadi.</p>
-        </div>
-        <div class="card">
-            <h3>Karta 2</h3>
-            <p>Bu ikkinchi karta uchun matn. Ekran kichrayganda bu kartalar pastga tartib bilan tushadi.</p>
-        </div>
-        <div class="card">
-            <h3>Karta 3</h3>
-            <p>Bu uchinchi karta uchun matn. flex-wrap xossasi aynan shu moslashuvchanlikni ta'minlaydi.</p>
-        </div>
-    </main>
+        <section class="card card-large">
+            <h2>Karta 1 (Kattalashtirilgan)</h2>
+            <p>Bu karta <code>grid-column: span 2;</code> xossasi yordamida ikkita ustun kengligini egallab turibdi. Bu muhim yangiliklar yoki katta kontentlar uchun juda qulay.</p>
+        </section>
+
+        <section class="card">
+            <h2>Karta 2</h2>
+            <p>Bu oddiy ustun o'lchamidagi karta. Grid tarmog'ida o'ziga ajratilgan 1 ta ustun joyini egallaydi.</p>
+        </section>
+
+        <section class="card">
+            <h2>Karta 3</h2>
+            <p>Uchinchi karta. CSS Grid avtomatik ravishda elementlarni bo'sh joylarga tartib bilan joylashtiradi.</p>
+        </section>
+
+        <section class="card">
+            <h2>Karta 4</h2>
+            <p>To'rtinchi karta. Elementlar soni ko'paysa, ular keyingi qatorlardan joy olishda davom etadi.</p>
+        </section>
+
+        <section class="card">
+            <h2>Karta 5</h2>
+            <p>Beshinchi karta. Barcha kartalar bir xil tartibda va chiroyli to'r shaklida joylashgan.</p>
+        </section>
+
+        <footer class="footer">
+            <p>&copy; 2026 Barcha huquqlar himoyalangan.</p>
+        </footer>
+    </div>
 
 </body>
 </html>
@@ -51,74 +61,80 @@ CSS
 }
 
 body {
-    background-color: #f4f6f9;
+    background-color: #f0f2f5;
     padding: 20px;
 }
 
-/* --- NAVIGATSIYA (Flexbox) --- */
-.navbar {
-    display: flex;
-    justify-content: space-between; /* Logotip chapda, menu o'ngda */
-    align-items: center;           /* Vertikal bo'yicha markazlash */
-    background-color: #ffffff;
-    padding: 15px 30px;
+/* --- GRID KONTEYNERI --- */
+.grid-container {
+    display: grid;
+    /* 3 ta teng ustunli to'r yaratish */
+    grid-template-columns: repeat(3, 1fr); 
+    /* Qatorlar va ustunlar orasidagi masofa */
+    gap: 20px; 
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* --- SARLAVHA VA FOOTER --- */
+.header, .footer {
+    /* 1-chiziqdan boshlab oxirgi chiziqqacha (to'liq kenglik) */
+    grid-column: 1 / -1; 
+    background-color: #1e293b;
+    color: #ffffff;
+    padding: 20px;
+    text-align: center;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    margin-bottom: 30px;
 }
 
-.logo {
+.header h1 {
     font-size: 24px;
-    font-weight: bold;
-    color: #333;
 }
 
-.nav-menu a {
-    text-decoration: none;
-    color: #555;
-    margin-left: 20px;
-    font-weight: 500;
-    transition: color 0.3s;
-}
-
-.nav-menu a:hover {
-    color: #007bff;
-}
-
-/* --- KARTALAR (Flexbox & Wrap) --- */
-.card-container {
-    display: flex;
-    flex-wrap: wrap;       /* Kichik ekranda kartalarni pastga tushiradi */
-    gap: 20px;             /* Kartalar orasidagi masofa */
-}
-
+/* --- KARTALAR STILI --- */
 .card {
-    /* flex: grow shrink basis */
-    /* 1 (teng o'sadi), 1 (teng kichrayadi), calc(...) -> 3 ta karta orasidagi 2 ta gap (20px * 2 = 40px) ayirib tashlanadi */
-    flex: 1 1 calc((100% - 40px) / 3); 
-    
     background-color: #ffffff;
     padding: 25px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    border-top: 4px solid #007bff;
-    
-    /* Mobil qurilmalarda karta juda kichrayib ketmasligi uchun minimal kenglik */
-    min-width: 280px; 
 }
 
-.card h3 {
-    margin-bottom: 12px;
-    color: #222;
+.card h2 {
+    color: #334155;
+    margin-bottom: 10px;
+    font-size: 20px;
 }
 
 .card p {
-    color: #666;
-    line-height: 1.6;
+    color: #64748b;
+    line-height: 1.5;
 }
-Kodning asosiy qismlari:
-justify-content: space-between;: Navigatsiya panelida logotipni eng chapga, menyuni esa eng o'ngga surib beradi.
 
-flex-wrap: wrap;: Agarda ekran kengligi 3 ta kartani bir qatorga sig'dira olmasa (masalan, telefonda), kartalarni avtomatik ravishda keyingi qatorga o'tkazadi.
+/* --- MAXSUS KARTALAR (Kengaytirilgan) --- */
+.card-large {
+    /* 2 ta ustun kengligini egallash */
+    grid-column: span 2; 
+    background-color: #eff6ff; /* Ajralib turishi uchun boshqa rang */
+    border-left: 5px solid #3b82f6;
+}
 
-flex: 1 1 calc(...): Kartalarning kengligi har doim bir xil (teng) bo'lishini va umumiy joyni 3 ga teng bo'lishini ta'minlaydi.
+/* --- RESPONSIVE (Mobil qurilmalar uchun moslashuvchanlik) --- */
+@media (max-width: 768px) {
+    .grid-container {
+        /* Ekran kichrayganda barcha elementlar 1 ta ustunga aylanadi */
+        grid-template-columns: 1fr;
+    }
+    
+    .card-large {
+        /* Mobil ekranda katta karta ham 1 ta ustun joy oladi */
+        grid-column: auto;
+    }
+}
+Kodning asosiy tushuntirishlari:
+grid-template-columns: repeat(3, 1fr);: Konteyner ichida 3 ta teng (1fr yoki fractional unit) ustun hosil qiladi.
+
+grid-column: 1 / -1;: Sarlavha (header) va footer elementlariga birinchi grid chizig'idan boshlab eng oxirgi chiziqqacha cho'zilishni buyuradi. Bu ularning to'liq ekran kengligini egallashini ta'minlaydi.
+
+grid-column: span 2;: Birinchi kartaga odatdagi 1 ta ustun o'rniga, yonidagi qo'shni ustunni ham qo'shib, jami 2 ta ustun kengligida joylashish imkonini beradi.
+
+@media (max-width: 768px): Telefon yoki planshetlarda 3 ta ustun siqilib qolmasligi uchun maketni avtomat ravishda bitta ustunli tartibga (
