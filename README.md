@@ -1,131 +1,161 @@
 # -Flexbox
-Mana so'ralgan barcha talablar (CSS Grid maketi, @media so'rovi va matnlar uchun clamp() funksiyasi) asosida tayyorlangan kodlar.
-
 1. HTML Fayl (index.html)
 HTML
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="uz" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsiv Maket (Clamp)</title>
+    <title>Tema Almashinuvi</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="sahifa-konteyner">
-        <aside class="sidebar">
-            <h2 class="kichik-sarlavha">Navigatsiya</h2>
-            <ul>
-                <li><a href="#">Bosh sahifa</a></li>
-                <li><a href="#">Ma'lumotlar</a></li>
-                <li><a href="#">Sozlamalar</a></li>
-            </ul>
-        </aside>
+    <div class="konteyner">
+        <header class="header">
+            <h1 class="sarlavha">Tema Almashish Tizimi</h1>
+            <button id="tema-toggle" class="tugma">Rejimni o'zgartirish</button>
+        </header>
 
         <main class="kontent">
-            <h1 class="katta-sarlavha">Responsiv Matn va Grid Maketi</h1>
-            <p class="matn">
-                Ushbu sahifadagi sarlavhalar va matn o'lchami <code>clamp()</code> funksiyasi yordamida qilingan. 
-                Ekran o'lchamiga qarab matnlar hech qanday uzilishlarsiz, silliq ravishda kattalashadi yoki kichrayadi.
-            </p>
-            <p class="matn">
-                Katta ekranda chap tomonda sidebar va o'ng tomonda kontent ko'rinadi. 
-                Ekran kengligi 768px dan kichrayganda esa, ular avtomatik ravishda bitta ustunga tartiblanadi.
-            </p>
+            <div class="karta">
+                <h2 class="karta-sarlavha">CSS O'zgaruvchilari</h2>
+                <p class="matn">
+                    Ushbu sahifada birorta ham rang to'g'ridan-to'g'ri yozilmagan. 
+                    Barcha ranglar va o'lchamlar <code>:root</code> ichidagi o'zgaruvchilardan olinadi.
+                </p>
+            </div>
         </main>
     </div>
 
+    <script src="script.js"></script>
 </body>
 </html>
 2. CSS Fayl (style.css)
 CSS
-/* Umumiy stillar */
+/* --- CSS O'ZGARUVCHILARI (:root) --- */
+:root {
+    /* O'lchamlar (Padding, Margin, Radius) */
+    --padding-asosiy: 20px;
+    --padding-karta: 25px;
+    --radius-burchak: 12px;
+    --shrift-katta: clamp(1.8rem, 3vw, 2.5rem);
+    --shrift-normal: 1rem;
+    --shrift-orta: 1.4rem;
+
+    /* Standart yorug' (light) tema ranglari */
+    --rang-fon: #f8fafc;
+    --rang-blok: #ffffff;
+    --rang-matn-asosiy: #0f172a;
+    --rang-matn-tizimli: #475569;
+    --rang-asosiy: #3b82f6;
+    --rang-asosiy-hover: #1d4ed8;
+    --rang-tugma-matn: #ffffff;
+    --rang-soya: rgba(0, 0, 0, 0.05);
+}
+
+/* --- QORONG'U (DARK) TEMA RANGLARI --- */
+[data-theme="dark"] {
+    --rang-fon: #0f172a;
+    --rang-blok: #1e293b;
+    --rang-matn-asosiy: #f8fafc;
+    --rang-matn-tizimli: #94a3b8;
+    --rang-asosiy: #38bdf8;
+    --rang-asosiy-hover: #7dd3fc;
+    --rang-tugma-matn: #0f172a;
+    --rang-soya: rgba(0, 0, 0, 0.3);
+}
+
+/* --- SAHIFA STILLARI (Faqat o'zgaruvchilar bilan) --- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-family: system-ui, -apple-system, sans-serif;
+    /* Tema almashganda ranglar silliq o'zgarishi uchun transition */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 body {
-    background-color: #f8fafc;
-    color: #334155;
-    padding: 20px;
+    background-color: var(--rang-fon);
+    color: var(--rang-matn-asosiy);
+    padding: var(--padding-asosiy);
 }
 
-/* --- CLAMP() BILAN RESPONSIV MATNLAR --- */
-/* clamp(minimal_o'lcham, o'rtacha_o'lcham, maksimal_o'lcham) */
-.katta-sarlavha {
-    font-size: clamp(1.8rem, 4vw + 1rem, 3rem);
-    line-height: 1.2;
-    margin-bottom: 15px;
-    color: #0f172a;
+.konteyner {
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-.kichik-sarlavha {
-    font-size: clamp(1.3rem, 2vw + 1rem, 1.8rem);
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--padding-asosiy);
+    padding: var(--padding-asosiy) 0;
+}
+
+.sarlavha {
+    font-size: var(--shrift-katta);
+}
+
+/* Tugma stili */
+.tugma {
+    background-color: var(--rang-asosiy);
+    color: var(--rang-tugma-matn);
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--radius-burchak);
+    font-weight: 600;
+    font-size: var(--shrift-normal);
+    cursor: pointer;
+}
+
+.tugma:hover {
+    background-color: var(--rang-asosiy-hover);
+}
+
+/* Karta stili */
+.karta {
+    background-color: var(--rang-blok);
+    padding: var(--padding-karta);
+    border-radius: var(--radius-burchak);
+    box-shadow: 0 4px 6px -1px var(--rang-soya);
+}
+
+.karta-sarlavha {
+    font-size: var(--shrift-orta);
     margin-bottom: 10px;
 }
 
 .matn {
-    font-size: clamp(1rem, 0.5vw + 0.9rem, 1.2rem);
+    color: var(--rang-matn-tizimli);
+    font-size: var(--shrift-normal);
     line-height: 1.6;
-    margin-bottom: 15px;
 }
+3. JavaScript Fayl (script.js)
+JavaScript
+// Tugmani tanlab olamiz
+const temaToggleBtn = document.getElementById('tema-toggle');
 
-/* --- GRID MAKETI (Katta ekran uchun) --- */
-.sahifa-konteyner {
-    display: grid;
-    /* Chapda 250px li sidebar, o'ngda qolgan barcha joyni oluvchi kontent */
-    grid-template-columns: 250px 1fr; 
-    gap: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
+// HTML elementini tanlab olamiz (data-theme atributini o'zgartirish uchun)
+const htmlElement = document.documentElement;
 
-.sidebar {
-    background-color: #0f172a;
-    color: #ffffff;
-    padding: 25px;
-    border-radius: 12px;
-}
-
-.sidebar ul {
-    list-style: none;
-}
-
-.sidebar ul li {
-    margin-bottom: 12px;
-}
-
-.sidebar ul li a {
-    color: #cbd5e1;
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-.sidebar ul li a:hover {
-    color: #38bdf8;
-}
-
-.kontent {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-/* --- MEDIA SO'ROVI (Kichik ekranlar uchun) --- */
-@media (max-width: 768px) {
-    .sahifa-konteyner {
-        /* Kichik ekranda 2 ta ustun 1 ta ustunga aylanadi */
-        grid-template-columns: 1fr;
+// Tugma bosilganda ishlaydigan funksiya
+temaToggleBtn.addEventListener('click', () => {
+    // Hozirgi temani tekshiramiz
+    const joriyTema = htmlElement.getAttribute('data-theme');
+    
+    // Agar light bo'lsa dark ga, aks holda light ga o'tkazamiz
+    if (joriyTema === 'light') {
+        htmlElement.setAttribute('data-theme', 'dark');
+    } else {
+        htmlElement.setAttribute('data-theme', 'light');
     }
-}
-Texnologiyalar tushuntirishi:
-clamp() funksiyasi: Matn o'lchamini dinamik boshqaradi. Masalan, clamp(1.8rem, 4vw + 1rem, 3rem) sarlavha o'lchami eng kichik ekranda 1.8rem dan kamayib ketmasligini, eng katta ekranda 3rem dan oshmasligini va ular orasida ekranning kengligiga (4vw) qarab silliq o'zgarishini ta'minlaydi.
+});
+Bu tizimning ishlash mexanizmi:
+Hech qanday rang CSS ichida to'g'ridan-to'g'ri yozilmadi: Barcha rang beruvchi xossalar (masalan: background-color, color) var(--o'zgaruvchi-nom) ko'rinishida yozildi.
 
-grid-template-columns: 250px 1fr;: Katta ekranlarda yon panelni aniq 250 piksel, asosiy qismni esa qolgan hamma bo'sh joyni egallaydigan qiladi.
+Atribut orqali boshqarish: JavaScript tugma bosilganda HTML tegining data-theme atributini light yoki dark ga o'zgartiradi.
 
-@media (max-width: 768px): Ekran kengligi 768px yoki undan kichik bo'lganda gridni 1fr (ya'ni 1 ta ustun) holatiga o'tkazadi va natijada sidebar kontentning tepasiga chiqib qoladi.
+CSS-ning kuchi: [data-theme="dark"] selektori ishga tushganda, barcha o'zgaruvchilar yangi (qorong'u) rang qiymatlarini oladi va butun sahifa avtomatik ravishda yangi ranglarga moslashadi.
