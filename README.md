@@ -1,143 +1,164 @@
 # -Flexbox
-1. Global O'zgaruvchilar Fayli (_variables.scss)
+1. Mixinlar Fayli (_mixins.scss)
 SCSS
 // ==========================================
-// 1. RANG O'ZGARUVCHILARI (Kamida 8 ta)
+// 1. FLEX-CENTER MIXIN
 // ==========================================
-$color-primary:       #3b82f6; // Asosiy ko'k rang
-$color-primary-hover: #1d4ed8; // Asosiy rang ustiga borgandagi holat
-$color-secondary:     #64748b; // Ikkinchi darajali kulrang
-$color-success:       #10b981; // Muvaffaqiyat (yashil)
-$color-danger:        #ef4444; // Xatolik/O'chirish (qizil)
-$color-bg-main:       #f8fafc; // Sahifaning asosiy foni
-$color-bg-card:       #ffffff; // Bloklar va kartalar foni
-$color-text-dark:     #0f172a; // To'q matnlar uchun
-$color-text-light:    #ffffff; // Yoritilgan matnlar uchun
-$color-border:        #e2e8f0; // Chegaralar uchun rang
-
-// ==========================================
-// 2. TIPOGRAFIYA O'ZGARUVCHILARI
-// ==========================================
-$font-size-sm:        0.875rem; // Kichik matnlar (14px)
-$font-size-md:        1rem;     // Oddiy matnlar (16px)
-$font-size-lg:        1.25rem;  // Katta matnlar (20px)
-$font-heading:        2rem;     // Sarlavhalar uchun (32px)
-$font-family-base:    'Inter', system-ui, sans-serif;
-
-// ==========================================
-// 3. BO'SHLIQ SISTEMI (Spacing System)
-// ==========================================
-$space-xs:            0.25rem; // 4px
-$space-sm:            0.5rem;  // 8px
-$space-md:            1rem;    // 16px
-$space-lg:            1.5rem;  // 24px
-$space-xl:            2rem;    // 32px
-$space-2xl:           3rem;    // 48px
-
-// ==========================================
-// 4. BORDER-RADIUS VA BOX-SHADOW
-// ==========================================
-$radius-sm:           4px;
-$radius-md:           8px;
-$radius-lg:           12px;
-$radius-circle:       50%;
-
-$shadow-sm:           0 1px 2px 0 rgba(0, 0, 0, 0.05);
-$shadow-md:           0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-$shadow-lg:           0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-2. Navigatsiya Komponenti Fayli (_nav.scss)
-SCSS
-// O'zgaruvchilarni ulash (Agar alohida faylda bo'lsa)
-@import 'variables';
-
-// ==========================================
-// 5. SCSS NESTING BILAN NAV KOMPONENTI
-// ==========================================
-.main-nav {
+// Standart holatda elementlarni to'liq markazlaydi ($justify va $align o'zgartirilishi ham mumkin)
+@mixin flex-center($justify: center, $align: center) {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    
-    // O'zgaruvchilardan foydalanish
-    background-color: $color-bg-card;
-    padding: $space-md $space-lg;
-    border-bottom: 1px solid $color-border;
-    box-shadow: $shadow-sm;
-    font-family: $font-family-base;
+    justify-content: $justify;
+    align-items: $align;
+}
 
-    .nav-logo {
-        font-size: $font-size-lg;
-        font-weight: 700;
-        color: $color-text-dark;
-        text-decoration: none;
+// ==========================================
+// 2. RESPOND-TO MIXIN (Media Queries)
+// ==========================================
+// Breakpoint qiymatlarini o'zgaruvchida saqlaymiz
+$breakpoints: (
+    'sm': 576px,
+    'md': 768px,
+    'lg': 992px,
+    'xl': 1200px
+);
+
+@mixin respond-to($breakpoint) {
+    // Berilgan breakpoint xaritada borligini tekshiramiz
+    @if map-has-key($breakpoints, $breakpoint) {
+        $value: map-get($breakpoints, $breakpoint);
         
-        &:hover {
-            color: $color-primary;
+        @media (max-width: $value) {
+            @content;
         }
+    } @else {
+        @warn "Kechirasiz, bunday breakpoint topilmadi: #{$breakpoint}.";
+    }
+}
+
+// ==========================================
+// 3. BUTTON-VARIANT MIXIN
+// ==========================================
+// Ranglarni qabul qilib, tugma va uning :hover holatini avtomatlashtiradi
+@mixin button-variant($bg, $color) {
+    background-color: $bg;
+    color: $color;
+    border: 1px solid transparent;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+
+    &:hover {
+        // Rangni avtomatik 10% to'q qilib beradi
+        background-color: darken($bg, 10%);
     }
 
-    .nav-list {
-        display: flex;
-        gap: $space-md;
-        list-style: none;
-        margin: 0;
-        padding: 0;
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+// ==========================================
+// 4. TRUNCATE MIXIN (Matnni qisqartirish)
+// ==========================================
+// Berilgan qatorlar sonidan oshganda matn oxiriga uchta nuqta (...) qo'yadi
+@mixin truncate($lines: 1) {
+    @if $lines == 1 {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    } @else {
+        display: -webkit-box;
+        -webkit-line-clamp: $lines;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+}
+2. Komponentlar Fayli (_components.scss)
+Yuqoridagi barcha mixinlarni haqiqiy hayotiy komponentlarda (Karta va Tugmalar) ishlatib ko'ramiz:
+
+SCSS
+@import 'mixins';
+
+// ==========================================
+// 5. MIXINLARNING KOMPONENTLARDA ISHLATILISHI
+// ==========================================
+
+// --- A) Tugmalar Komponenti (button-variant ishlatilishi) ---
+.btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+
+    // Mixin yordamida har xil variantlarni yaratamiz
+    &--primary {
+        @include button-variant(#3b82f6, #ffffff);
     }
 
-    .nav-item {
-        // Element ichidagi elementlar (Nesting)
-        .nav-link {
-            display: inline-block;
-            font-size: $font-size-md;
-            color: $color-secondary;
-            text-decoration: none;
-            padding: $space-sm $space-md;
-            border-radius: $radius-sm;
-            transition: all 0.2s ease-in-out;
+    &--success {
+        @include button-variant(#10b981, #ffffff);
+    }
 
-            // Uchun :hover holati
-            &:hover {
-                color: $color-primary-hover;
-                background-color: lighten($color-primary, 35%); // SCSS o'rnatilgan funksiyasi
-            }
+    &--danger {
+        @include button-variant(#ef4444, #ffffff);
+    }
+}
 
-            // Uchun .active holati (Joriy sahifa)
-            &.active {
-                color: $color-text-light;
-                background-color: $color-primary;
-                box-shadow: $shadow-md;
-                font-weight: 600;
-                
-                &:hover {
-                    background-color: $color-primary-hover;
-                }
-            }
+// --- B) Profil Kartasi Komponenti (Barcha mixinlar jamlanmasi) ---
+.profile-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 350px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+
+    // 1. flex-center mixin: Avatar va ma'lumotlarni vertikal tekislaydi
+    &__header {
+        @include flex-center(flex-start, center);
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    &__avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #cbd5e1;
+        // Ichidagi ikonkani markazlash uchun yana flex-center
+        @include flex-center(); 
+    }
+
+    // 4. truncate mixin: Karta sarlavhasi va matnlarini jilovlash
+    &__title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+        @include truncate(1); // Ism juda uzun bo'lsa 1 qatorda kesiladi
+    }
+
+    &__bio {
+        font-size: 0.9rem;
+        color: #64748b;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        @include truncate(3); // Bioografiya 3 qatordan oshsa ... bo'ladi
+    }
+
+    // 2. respond-to mixin: Kichik (Mobil) ekranda kartani moslashtirish
+    @include respond-to('md') {
+        max-width: 100%; // Mobil ekranda to'liq kenglikni oladi
+        padding: 16px;
+
+        &__header {
+            flex-direction: column; // Rasmni tepaga, matnni pastga tushiradi
+            text-align: center;
+            @include flex-center(center, center);
         }
     }
 }
-3. Namuna HTML Tuzilishi (index.html)
-Ushbu SCSS kodlari brauzerda to'g'ri ko'rinishi uchun HTML quyidagi klaslar ierarxiyasida bo'lishi kerak:
+Kodlar Tahlili:
+@include flex-center(): Kodni qayta yozishdan asraydi, display: flex, justify-content kabilarni bir qatorda hal qiladi.
 
-HTML
-<nav class="main-nav">
-    <a href="#" class="nav-logo">BrendLogo</a>
-    
-    <ul class="nav-list">
-        <li class="nav-item">
-            <a href="#" class="nav-link active">Bosh sahifa</a>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link">Xizmatlar</a>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link">Loyihalar</a>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link">Aloqa</a>
-        </li>
-    </ul>
-</nav>
-Kodning afzalliklari va tahlili:
-Sizga moslashuvchanlik: Dizayn rangini o'zgartirish uchun faqat $color-primary o'zgartirilsa kifoya, .nav-link:hover va .nav-link.active avtomatik ravishda yangi rangga moslashadi.
+@include respond-to('md'): CSS ichida chalkash media-query yozishni yo'qotadi va komponentga tegishli responsiv kodni komponentning o'z ichida saqlashga yordam beradi.
 
-Toza Nesting: .nav-link ichida yozilgan &:hover brauzerda .main-nav .nav-item .nav-link:hover ko'rinishida CSS ga kompilyatsiya bo'ladi,
+@include truncate(3): CSS-ning eski va murakkab
